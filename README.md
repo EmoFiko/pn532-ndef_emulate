@@ -60,3 +60,9 @@ pio run -t upload --upload-port COM6
 ## Not
 
 Bu proje PN532'nin ISO 14443-4 (Type 4) NDEF emülasyonunu kullanır. Telefonun NFC'si açık olmalı ve PN532 antenine sıkmak gerekebilir.
+
+---
+
+## Kaynak ve Teşekkür
+
+Bu proje [SudeKun/NFC_Wallet_Project](https://github.com/SudeKun/NFC_Wallet_Project) üzerinden yapılmıştır. Orijinal repodaki PN532 ve NDEF kütüphanelerinden yararlanılmıştır.
