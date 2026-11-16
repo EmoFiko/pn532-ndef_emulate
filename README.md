@@ -1,87 +1,62 @@
 # PN532 Rickroll NDEF Emulator
 
-This project implements NFC (Near Field Communication) functionality using Arduino-compatible boards with PN532 NFC modules. It includes libraries for NDEF (NFC Data Exchange Format) message handling and PN532 communication protocols.
+ESP32 ve PN532 NFC modülü ile telefonuna **NDEF etiketi** gibi görünen bir cihaz yap. Telefonu PN532'ye yaklaştırdığında ekranda bir YouTube linki (Rickroll) çıkar.
 
-## Features
+## İçerik
 
-- NDEF message creation, reading, and writing
-- Support for MIFARE Classic and Ultralight tags
-- Peer-to-peer (P2P) communication
-- Tag emulation
-- Multiple communication interfaces (HSU, I2C, SPI)
+- `src/main.cpp` — ESP32 ana kodu (NDEF emülasyonu + seri komutlar)
+- `lib/PN532/` — PN532 sürücüsü ve `EmulateTag` sınıfı
+- `lib/NDEF/` — NDEF mesaj oluşturma kütüphanesi
+- `platformio.ini` — PlatformIO proje ayarları
 
-## Hardware Requirements
+## Donanım
 
-- Arduino-compatible board (e.g., Arduino Uno, ESP32)
-- PN532 NFC module
-- NFC tags/cards for testing
+- ESP32 geliştirme kartı
+- PN532 NFC modülü (HSU/UART modu)
+- 4 adet dupont kablo
 
-## Software Requirements
+## Bağlantı
 
-- PlatformIO IDE or VS Code with PlatformIO extension
-- Arduino framework
+| PN532 | ESP32 |
+|-------|-------|
+| TX | GPIO 16 (RX2) |
+| RX | GPIO 17 (TX2) |
+| GND | GND |
+| VCC | 3.3V (veya 5V) |
 
-## Installation
+**DIP switchleri:** OFF – OFF (HSU modu)
 
-1. Clone or download this repository
-2. Open the project in PlatformIO
-3. Build and upload the desired example sketch
+## Kurulum
 
-## Usage
+1. Depoyu bilgisayara indir veya klonla.
+2. Klasörü **PlatformIO IDE** (VS Code) ile aç.
+3. ESP32'yi bilgisayara bağla.
+4. Terminalde şu komutu çalıştır (portunu kendi portunla değiştir, ör. COM3, COM6):
 
-### Examples
-
-The `lib/NDEF/examples/` and `lib/PN532/examples/` directories contain various example sketches:
-
-- `ReadTag.ino`: Read NDEF messages from NFC tags
-- `WriteTag.ino`: Write NDEF messages to NFC tags
-- `P2P_Send.ino` / `P2P_Receive.ino`: Peer-to-peer communication
-- `emulate_tag_ndef.ino`: Tag emulation
-
-### Library Usage
-
-Include the necessary headers in your Arduino sketch:
-
-```cpp
-#include <NfcAdapter.h>
-#include <NdefMessage.h>
+```bash
+pio run -t upload --upload-port COM6
 ```
 
-Initialize the NFC adapter and perform operations as shown in the examples.
+5. Arduino IDE Serial Monitor'u aç, baud rate'i **9600** yap.
 
-### Main Application
+## Kullanım
 
-The main application in `src/main.cpp` provides NFC card cloning, reading, and emulation functionality for ESP32.
+1. Serial Monitor'a **`E`** yazıp **Gönder**'e bas.
+2. Telefonunu **PN532 anteninin üzerine sıkmak ve basılı tut**.
+3. Telefon ekranında bir NDEF etiketi çıkacak ve link açılacaktır.
 
-1. Connect the PN532 module to the ESP32:
-   - TX -> GPIO 16 (RX2)
-   - RX -> GPIO 17 (TX2)
-   - Set DIP switches to OFF - OFF for HSU mode
+> Bazı Android telefonları linki otomatik tarayıcıda açmaz. NFC Tools gibi bir uygulama ile kaydı görebilir, linki elle tıklayabilirsin.
 
-2. Open the project in PlatformIO and build/upload the sketch.
+## Seri Komutlar
 
-3. Open the serial monitor (115200 baud) to interact with the device.
+| Komut | Açıklama |
+|-------|----------|
+| `E` | NDEF Rickroll emülasyonunu başlat |
+| `R` | Yakındaki MIFARE kartı oku |
+| `L` | Kaydedilmiş kartları listele |
+| `W0` | ID 0'lı kaydı başka bir karta klonla |
+| `D0` | ID 0'lı kaydı sil |
 
-4. The application supports:
-   - Reading MIFARE Classic cards
-   - Cloning card data
-   - Emulating tags with NDEF messages
-   - Peer-to-peer communication via SNEP
+## Not
 
-Follow the serial prompts to perform operations.
-
-## Project Structure
-
-- `src/`: Main source code
-- `lib/NDEF/`: NDEF library for message handling
-- `lib/PN532/`: PN532 driver library
-- `include/`: Additional includes
-- `test/`: Test sketches
-
-## Contributing
-
-Contributions are welcome. Please submit issues and pull requests on the project repository.
-
-## License
-
-This project uses libraries with their respective licenses. Check individual library READMEs for details.
+Bu proje PN532'nin ISO 14443-4 (Type 4) NDEF emülasyonunu kullanır. Telefonun NFC'si açık olmalı ve PN532 antenine sıkmak gerekebilir.
